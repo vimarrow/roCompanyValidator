@@ -1,0 +1,45 @@
+{
+  "name": "rocompanyvalidator",
+  "version": "0.0.1",
+  "description": "Serviciu web public gratuit destinat contabililor pentru cautarea agentilor economici din UE dupa CIF in diverse surse (mfinante, anaf, VIES)",
+  "main": "client/index.js",
+  "scripts": {
+    "start": "parcel ./client/index.html",
+    "server": "node ./server/index.js",
+    "build": "parcel build index.html"
+  },
+  "keywords": [
+    "firme",
+    "claudit",
+    "CUI",
+    "CIF",
+    "baza",
+    "de",
+    "date",
+    "TVA"
+  ],
+  "author": "bratuleanu21@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/polyfill": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/preset-react": "^7.0.0",
+    "parcel-bundler": "^1.12.3",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.4.2",
+    "@material-ui/icons": "^4.4.1",
+    "axios": "^0.19.0",
+    "babel-polyfill": "^6.26.0",
+    "mongodb": "^3.3.2",
+    "r3lab-server": "^0.1.2",
+    "saslprep": "^1.0.3",
+    "xml2js": "^0.4.22"
+  }
+}
