@@ -191,7 +191,13 @@ class SearchResults extends React.Component {
 							<TableCell><div>Platitor de TVA</div><Typography onClick={this.toggleShowTVA} className={classes.tvaBtn} variant="subtitle1">Detali TVA</Typography></TableCell>
 							<TableCell>{response.mfinante.tva || '-'}</TableCell>
 							<TableCell>{response.anaf.mesaj_ScpTVA || '-'}</TableCell>
-							<TableCell>{response.vies.valid ? (<span className={classes.viesYes}>Da, număr valid de înregistrare pentru TVA</span>) : (<span className={classes.viesNo}>Număr de TVA invalid pentru tranzacțiile transfrontaliere în interiorul UE</span>)}</TableCell>
+							<TableCell>{(typeof response.vies.valid === 'boolean') && (
+								response.vies.valid ? (
+									<span className={classes.viesYes}>Da, număr valid de înregistrare pentru TVA</span>
+								) : (
+									<span className={classes.viesNo}>Număr de TVA invalid pentru tranzacțiile transfrontaliere în interiorul UE</span>
+								))}
+							</TableCell>
 						</TableRow>
 						<TableRow hover>
 							<TableCell>Status</TableCell>
