@@ -108,7 +108,7 @@ class SearchResults extends React.Component {
 	}
 	loadData(ev) {
 		const { cod, cif } = ev.detail;
-		fetch(`http://167.71.3.14:2424/api/companydata/${cif}?cod=${cod}`).then(async (res) => {
+		fetch(`http://167.71.3.14/api/companydata/${cif}?cod=${cod}`).then(async (res) => {
 				if(res.status > 399) {
 					throw await res.json();
 				}
