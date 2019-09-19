@@ -149,10 +149,11 @@ class SearchResults extends React.Component {
 						<Typography id="tva-modal-descript" variant="subtitle1">
 							<div><span className={classes.faded}>Nume:</span> {response.mfinante.nume || response.anaf.denumire || response.vies.name}</div>
 							<div><span className={classes.faded}>Cod Indentificare Ficala:</span> {response.cifComplet}</div>
-							{isRO ? (<div><span className={classes.faded}>Data interogare ANAF:</span> {response.anaf.data}</div>) : (<div><span className={classes.faded}>Data interogare VIES:</span> {response.vies.data}</div>)}
+							{response.anaf && response.anaf.mesaj_ScpTVA ? (<div><span className={classes.faded}>Data interogare ANAF:</span> {response.anaf.data}</div>) : null}
+							{response.vies && typeof response.vies.valid === 'boolean' ? (<div><span className={classes.faded}>Data interogare VIES:</span> {response.vies.data}</div>) : null}
 						</Typography>
 						<Divider />
-						{isRO ? (
+						{response.anaf && response.anaf.mesaj_ScpTVA ? (
 							<Typography style={{margin: '16px 0'}} id="tva-modal-descript" variant="body2">
 								<div>ANAF: {response.anaf.mesaj_ScpTVA}</div>
 								<div><span className={classes.faded}>Data înregistrării în scopuri de TVA: </span>{response.anaf.data_inceput_ScpTVA || '-'}</div>
@@ -164,11 +165,12 @@ class SearchResults extends React.Component {
 								<div><span className={classes.faded}>Data de la care aplică "Split TVA": </span>{response.anaf.dataInceputSplitTVA || '-'}</div>
 								<div><span className={classes.faded}>Data până la care aplică "Split TVA": </span>{response.anaf.dataAnulareSplitTVA || '-'}</div>
 							</Typography>
-						) : (
+						) : null}
+						{response.vies && typeof response.vies.valid === 'boolean' ? (
 							<Typography style={{margin: '16px 0'}} id="tva-modal-descript" variant="body2">
 								<div>VIES: {response.vies.valid ? (<span className={classes.viesYes}>Da, număr valid de înregistrare pentru TVA</span>) : (<span className={classes.viesNo}>Număr de TVA invalid pentru tranzacțiile transfrontaliere în interiorul UE</span>)}</div>
 							</Typography>
-						)}
+						) : null}
 					</div>
 				</Modal>
 				<Table className={classes.table}>

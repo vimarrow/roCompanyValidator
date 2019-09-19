@@ -62,7 +62,7 @@ class CompanyData extends Route {
 				console.log('inserted into ANAF: '+formattedToday);
 			};
 		}
-		if (cod !== 'RO' && (!vies || !Object.keys(vies).length || shouldUpdate(vies.data, formattedToday))) {
+		if (!vies || !Object.keys(vies).length || shouldUpdate(vies.data, formattedToday)) {
 			console.log('request from VIES: '+formattedToday);
 			const { data: viesRaw } = await axios.post('http://ec.europa.eu/taxation_customs/vies/services/checkVatService', formatSOAP(cif, cod || 'RO'));
 			parseString(viesRaw, async (err, result) => {
