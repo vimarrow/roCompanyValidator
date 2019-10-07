@@ -46,13 +46,19 @@ class CompanyData extends Route {
 		if(cod === 'RO' && (!cifValidation(cif) || isNaN(Number(cif)))) {
 			throw ServerError(400, 'invalid', 'CIF invalid');
 		}
-		let mfinante = cod === 'RO' ? await this.db.collection('mfinante').findOne({_id: Number(cif)}) : {};
-		let anaf = cod === 'RO' ? await this.db.collection('anaf').findOne({_id: Number(cif)}) : {};
-		let vies = (await this.db.collection('vies').findOne({_id: cod + '-' + cif})) || {};
-		if (cod === 'RO' && (!anaf || !Object.keys(anaf).length || shouldUpdate(anaf.data, formattedToday))) {
+		const dbQuery ={_id: Number(cif)};
+		const viesDbQuery = {_id: cod + '-' + cif};
+		let mfinante = cod === 'RO' ? await this.db.collection('mfinante').findOne(dbQuery) : {};
+		let anaf = cod === 'RO' ? await this.db.collection('anaf').findOne(dbQuery) : {};
+		let vies = (await this.db.collection('vies').findOne(viesDbQuery)) || {};
+		const anafExists = anaf && Object.keys(anaf).length;
+		if (cod === 'RO' && (!anafExists || shouldUpdate(anaf.data, formattedToday))) {
 			console.log('request from ANAF: '+formattedToday);
 			const { data: anafRaw } = await axios.post('https://webservicesp.anaf.ro/PlatitorTvaRest/api/v4/ws/tva', [{"cui": cif, "data": formattedToday}]);
 			if(anafRaw.cod === 200 && anafRaw.message === 'SUCCESS' && anafRaw.found[0] && Object.keys(anafRaw.found[0]).length) {
+				if(anafExists) {
+					await this.db.collection('anaf').deleteOne(dbQuery);
+				}
 				const rAnaf = {...anafRaw.found[0]};
 				anaf = rAnaf;
 				const _id = rAnaf.cui;
@@ -62,7 +68,8 @@ class CompanyData extends Route {
 				console.log('inserted into ANAF: '+formattedToday);
 			};
 		}
-		if (!vies || !Object.keys(vies).length || shouldUpdate(vies.data, formattedToday)) {
+		const viesExists = vies && Object.keys(vies).length;
+		if (!viesExists || !Object.keys(vies).length || shouldUpdate(vies.data, formattedToday)) {
 			console.log('request from VIES: '+formattedToday);
 			const { data: viesRaw } = await axios.post('http://ec.europa.eu/taxation_customs/vies/services/checkVatService', formatSOAP(cif, cod || 'RO'));
 			parseString(viesRaw, async (err, result) => {
@@ -74,6 +81,9 @@ class CompanyData extends Route {
 				if(body['soap:Fault'] && body['soap:Fault'][0] && body['soap:Fault'][0]['faultcode']){
 					console.error('error from VIES: ', body['soap:Fault'][0]['faultstring']);
 				} else if(body['checkVatResponse'] && body['checkVatResponse'][0] && Object.keys(body['checkVatResponse'][0]).length && body['checkVatResponse'][0]['valid'] && body['checkVatResponse'][0]['valid'].length) {
+					if(viesExists) {
+						await this.db.collection('vies').deleteOne(viesDbQuery);
+					}
 					const checkVatResponse = body['checkVatResponse'][0];
 					const newVies = {
 						_id: cifComplet,
